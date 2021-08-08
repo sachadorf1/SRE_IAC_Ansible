@@ -1,6 +1,8 @@
 
-# Clone this repo and run `vagrant up`
+# Ansible controller and agent nodes set up guide
+- Clone this repo and run `vagrant up`
 - `(double check syntax/intendation)`
+
 ## We will use 18.04 ubuntu for ansible controller and agent nodes set up 
 ### Please ensure to refer back to your vagrant documentation
 
