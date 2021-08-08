@@ -1,4 +1,8 @@
-```
+
+# Clone this repo and run `vagrant up` (double check syntax/intendation)
+## 
+
+```vagrant 
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -25,7 +29,7 @@ Vagrant.configure("2") do |config|
     config.hostsupdater.aliases = ["development.web"]
     # creating a link called development.web so we can access web page with this link instread of an IP   
         
-    end
+  end
   
 # creating second VM called db
   config.vm.define "db" do |db|
@@ -37,18 +41,20 @@ Vagrant.configure("2") do |config|
     db.vm.network :private_network, ip: "192.168.33.11"
     
     config.hostsupdater.aliases = ["development.db"]     
-    end
+  end
 
-# creating third VM called aws 
-  config.vm.define "aws" do |aws|
+ # creating are Ansible controller
+  config.vm.define "controller" do |controller|
     
-    aws.vm.box = "bento/ubuntu-18.04"
+    controller.vm.box = "bento/ubuntu-18.04"
     
-    aws.vm.hostname = 'aws'
+    controller.vm.hostname = 'controller'
     
-    aws.vm.network :private_network, ip: "192.168.33.12"
+    controller.vm.network :private_network, ip: "192.168.33.12"
     
-    config.hostsupdater.aliases = ["development.aws"] 
-   end
+    config.hostsupdater.aliases = ["development.controller"] 
+    
+  end
+
 end
 ```
