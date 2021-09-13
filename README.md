@@ -2,6 +2,8 @@
 ## Iac - Configuration Management and Orchestration
 ### Which tools are used for push config and pull config
 
+![](img/Ansible_diagram.png)
+
 - What is Ansible and benefits of it?
 - Why should we use Ansible?
 - Create a Diagram for Ansible on prem, Hybrid and public architecture
@@ -210,6 +212,8 @@ sudo nano hosts
 
 
 ### YAML
+In vagrant controller:
+cd /etc/ansible
 
 Create file nginx_playbook.yml
 
@@ -237,7 +241,9 @@ sudo nano nginx_playbook.yml
 ansible-playbook nginx_playbook.yml
 
 - Let's check if the playbook worked for us
+
 `ansible web -a "sudo systemctl status nginx"`
+
 - Enter the web ip in your browser and you should see nginx default page!
 
 Task:
