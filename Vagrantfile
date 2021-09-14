@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
     db.vm.hostname = 'db'
     
     db.vm.network :private_network, ip: "192.168.33.11"
-    
+
 #    config.hostsupdater.aliases = ["development.db"]     
   end
 
@@ -46,6 +46,9 @@ Vagrant.configure("2") do |config|
     
     controller.vm.hostname = 'controller'
     
+    # synced_folder to run provision.sh to set up ansible controller
+    controller.vm.provision = "controller/provision.sh"
+
     controller.vm.network :private_network, ip: "192.168.33.12"
     
 #    config.hostsupdater.aliases = ["development.controller"] 

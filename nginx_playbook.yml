@@ -66,3 +66,84 @@
 # sudo ln -s /home/ubuntu/config_files/mongod.conf /etc/mongod.conf
 # sudo systemctl restart mongod
 # ensure the Mongodb server is running
+
+#mongodb.yml
+# This is a YAML file to install nginx onto oue web VM using YAML
+---
+
+- hosts: db
+
+  gather_facts: yes
+
+  become: true
+
+  tasks:
+  - name: install mongodb
+    apt: pkg=mongodb state=present
+
+  - name: Remove mongodb file (delete file)
+    file:
+      path: /etc/mongodb.conf
+      state: absent
+
+  - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+    file:
+      path: /etc/mongodb.conf
+      state: touch
+      mode: u=rw,g=r,o=r
+
+
+  - name: Insert multiple lines and Backup
+    blockinfile:
+      path: /etc/mongodb.conf
+      backup: yes
+      block: |
+        "storage:
+          dbPath: /var/lib/mongodb
+          journal:
+            enabled: true
+        systemLog:
+          destination: file
+          logAppend: true
+          path: /var/log/mongodb/mongod.log
+        net:
+          port: 27017
+          bindIp: 0.0.0.0"
+
+# Install node js and NPM
+
+- hosts: web
+  gather_facts: true
+  become: true
+
+
+
+  tasks:
+  - name: Install nodejs
+    apt: pkg=nodejs state=present
+
+  - name: Install NPM
+    apt: pkg=npm state=present
+
+  - name: download latest npm + Mongoose
+    shell: |
+      npm install -g npm@latest
+      npm install mongoose -y
+# Downloading pm2
+  - name: Install pm2
+    npm:
+      name: pm2
+      global: yes
+
+
+  - name: seed + run app
+    shell: |
+      cd app/
+      npm install
+  #node seeds/seed.js
+      pm2 kill
+      pm2 start app.js
+#     environment:
+# # This is where you enter the environment variable to tell the app where to look for the db
+#       DB_HOST: mongodb://ubuntu@<ENTER DB IP HERE>:27017/posts?authSource=admin
+   become_user: root

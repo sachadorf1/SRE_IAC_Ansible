@@ -1,17 +1,39 @@
 # Infrastructure As Code (IAC)
 ## Iac - Configuration Management and Orchestration
-### Which tools are used for push config and pull config
 
 ![](img/Ansible_diagram.png)
 
-- What is Ansible and benefits of it?
-- Why should we use Ansible?
+### What is IAC?
+- The managing and provisioning of infrastructure through code instead of through manual processes.
+
+### Which tools are used for push config and pull config
+- Push - Puppet, Chef, Ansible
+- Push -
+- Pull Model: The nodes are dynamically updated with the configurations that are present in the server
+
+### What is Ansible and benefits of it?
+- A software tool that provides automation for cross-platform computer support
+- Simple
+- Executes repetitive system admin tasks e.g. provisioning, configuration management, application deployment
+- Used in the multi-sever environment
+- reusable
+### Why should we use Ansible?
+- 
 - Create a Diagram for Ansible on prem, Hybrid and public architecture
 - Step by step guide for installation and setting up Ansible controller with 2 agent nodes - include commands in your README.md
-- What is the default Directory structure for Ansible
-- What is the Inventory/hosts file and the purpose of it?
-- What should be added to hosts file to establish secure connection between ANsible controller and agent nodes? (include code block)
-- What are Ansible `Ad-hoc commands`?
+### What is the default Directory structure for Ansible
+- Identation is important
+
+### What is the Inventory/hosts file and the purpose of it?
+
+### What should be added to hosts file to establish secure connection between Ansible controller and agent nodes? (include code block)
+
+### What are Ansible `Ad-hoc commands`?
+- Used for tasks you do rarely
+- Uses the usr/bin/ansible command line to automate a single task for one or more managed nodes
+- not reusable, not simple
+- `ansible [pattern] -m [module] -a "[module options]"`
+
 - Add a structure of creating adhoc commands `ansible all -m ping` (m module)
 - include all the adhoc commands we have used today in this documentation
 
@@ -93,7 +115,7 @@ vagrant up
 
 - SSH into the 3 machines and run update and upgrade on each of them
 ```
-vagrant ssh app
+vagrant ssh web
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
@@ -286,7 +308,7 @@ tasks:
       sudo npm install pm2 -g -y
       sudo npm install
 ```
-Installing Mongodb
+### Installing Mongodb
 
 - Add the following to the end of the nginx_playbook.yml file
 
@@ -311,3 +333,29 @@ Installing Mongodb
       sudo systemctl enable mongod
 ```
 
+Tuesday task
+- Set up Ansible vault to secure AWS keys
+- Install dependencies
+- Python 3 and above
+- Boto3
+- pip3
+
+
+### Let's create Ansible vault file to secure our AWS keys
+- In /etc/ansible create a folder `mkdir /group_vars/all`
+- create pass.yml with `ansible-vault create pass.yml`
+- Copy your keys:
+  - aws_access_key:
+  - aws_secret_key:
+- cd into /etc/ansible `ansible db -m ping --ask-vault-pass`
+- enter password (e.g. 1234)
+- ping pong
+- cd .ssh
+- In controller: ssh-keygen -t rsa -b 4096
+- In localhost:
+  - cd .ssh
+  - cat sre_key.pem
+  - copy contents
+- In controller:
+  - sudo nano sre_key.pem
+  - paste contents from sre_key.pem
