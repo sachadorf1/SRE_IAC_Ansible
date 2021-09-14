@@ -97,11 +97,11 @@ vagrant ssh app
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-vagrant ssh app
+vagrant ssh db
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-vagrant ssh app
+vagrant ssh controller
 sudo apt-get update -y
 sudo apt-get upgrade -y
 ```
@@ -133,7 +133,7 @@ sudo apt-get install ansible -y
 `exit`
 
 `ssh vagrant@192.168.33.11`
--yes
+- yes
 - enter password
 
 `sudo apt-get update -y`
@@ -212,6 +212,9 @@ sudo nano hosts
 
 
 ### YAML
+## Playbooks
+### Installing nginx:
+
 In vagrant controller:
 cd /etc/ansible
 
@@ -254,3 +257,57 @@ Task:
 - Youtube
 - Stackover flow
 - configure nginx reverse proxy
+
+
+- Run the playbook: `ansible-playbook nginx_playbook.yml`
+
+ansible web -a "systemctl status nginx"
+
+### Clone the app from git repo
+- Add the following to the nginx_playbook.yml
+```
+tasks:
+  - name: Clone app from Git Repo
+    ansible.builtin.git:
+      repo: "https://github.com/sachadorf1/SRE_cloud_computing_aws.git"
+      dest: /home/vagrant/app
+      clone: yes
+      update: yes
+```
+### Installing nodejs
+- Add the following to the nginx_playbook.yml
+```
+tasks:
+  - name: Install dependencies
+    shell: |
+      curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+      sudo apt-get install nodejs -y
+      cd /home/vagrant/app
+      sudo npm install pm2 -g -y
+      sudo npm install
+```
+Installing Mongodb
+
+- Add the following to the end of the nginx_playbook.yml file
+
+```
+- hosts: db
+
+# gather facts about the installation steps
+  gather_facts: yes
+# we need admin access
+  become: true
+# add instructions to install Mongodb on db machine
+  tasks:
+  - name: Install Mongodb
+    shell: |
+      sudo apt-get update -y
+      sudo apt-get upgrade -y
+      wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+      echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+      sudo apt-get update -y
+      sudo apt-get install -y mongodb-org
+      sudo systemctl start mongod
+      sudo systemctl enable mongod
+```
+

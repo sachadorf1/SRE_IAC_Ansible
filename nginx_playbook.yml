@@ -11,6 +11,58 @@
   become: true
 # add instructions to install nginx on web machine
   tasks:
+  - name: Git checkout
+    ansible.builtin.git:
+      repo: "https://github.com/sachadorf1/SRE_cloud_computing_aws.git"
+      dest: /home/vagrant/app
+      clone: yes
+      update: yes
   - name: Install Nginx
-    apt: pkg=nginx state=present
+    apt: pkg={{ item }} state=present
+    with_items:
+      - nginx
+      - npm
+      - software-properties-common
+  - name: Install dependencies
+    shell: |
+      curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+      sudo apt-get install nodejs -y
+      cd /home/vagrant/app
+      sudo npm install pm2 -g -y
+      sudo npm install
+# pm2 kill
+# pm2 start app.js
+      
 # ensure the nginx server is running
+
+
+
+# Create a playbook to install Mongodb server on db machine
+# db 192.168.33.11
+# Let's add the 3 dashes to start the YAML
+---
+# add the name of the host
+- hosts: db
+
+# gather facts about the installation steps
+  gather_facts: yes
+# we need admin access
+  become: true
+# add instructions to install Mongodb on db machine
+  tasks:
+  - name: Install Mongodb
+    shell: |
+      sudo apt-get update -y
+      sudo apt-get upgrade -y
+      wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+      echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+      sudo apt-get update -y
+      sudo apt-get install -y mongodb-org
+      sudo systemctl start mongod
+      sudo systemctl enable mongod
+    environment:
+    DB_HOST=<DB_IP>:27017/posts
+# sudo rm /etc/mongod.conf
+# sudo ln -s /home/ubuntu/config_files/mongod.conf /etc/mongod.conf
+# sudo systemctl restart mongod
+# ensure the Mongodb server is running
